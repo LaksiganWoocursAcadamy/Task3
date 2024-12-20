@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url(download.jpg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1{
+            color:#dc3e05;
+            text-align: center;
+            font-family:Algerian;
+        }
+        .quiz-container {
+            background-image:url(360_F_439133763_FrLdhZsd5aGC23r9ATARuKJBr8ifZjIe.jpg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(252, 252, 252, 0.973);
+            width: 100%;
+            max-width: 600px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        button {
+            background-color: #007BFF;
+            color: #000000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+           
+           
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="quiz-container">
+        <h1>Quize App</h1>
+        <div id="quiz">
+            <p class="question"></p>
+            <ul class="options"></ul>
+            <p class="feedback"></p>
+            <button id="next" disabled>Next</button>
+        </div>
+        <div id="result" style="display: none;">
+            <p style="color: #fff;">Your final score is: <span id="score"></span>/5</p>
+            <button onclick="location.reload()">Retry</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What is the capital of France?", options: ["Berlin", "Madrid", "Paris", "Rome"], answer: 2 },
+            { question: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: 1 },
+            { question: "Who wrote 'Hamlet'?", options: ["Charles Dickens", "William Shakespeare", "Mark Twain", "J.K. Rowling"], answer: 1 },
+            { question: "What is the largest ocean on Earth?", options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"], answer: 3 },
+            { question: "What is the boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], answer: 1 }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const quizContainer = document.getElementById('quiz');
+        const questionEl = document.querySelector('.question');
+        const optionsEl = document.querySelector('.options');
+        const feedbackEl = document.querySelector('.feedback');
+        const nextButton = document.getElementById('next');
+        const resultContainer = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            optionsEl.innerHTML = '';
+            feedbackEl.textContent = '';
+            nextButton.disabled = true;
+
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<label><input type="radio" name="option" value="${index}"> ${option}</label>`;
+                optionsEl.appendChild(li);
+            });
+
+            optionsEl.addEventListener('change', () => {
+                nextButton.disabled = false;
+            });
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) return;
+
+            const answerIndex = parseInt(selectedOption.value);
+            const isCorrect = answerIndex === questions[currentQuestionIndex].answer;
+
+            feedbackEl.textContent = isCorrect ? "Correct!" : "Wrong!";
+            feedbackEl.style.color = isCorrect ? "green" : "red";
+
+            if (isCorrect) score++;
+        }
+
+        nextButton.addEventListener('click', () => {
+            checkAnswer();
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                quizContainer.style.display = 'none';
+                resultContainer.style.display = 'block';
+                scoreEl.textContent = score;
+            }
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
